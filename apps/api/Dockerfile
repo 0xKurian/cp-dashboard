@@ -5,16 +5,13 @@ WORKDIR /app
 
 # Copy root workspace manifest
 COPY package.json package-lock.json ./
+
+# Copy source code
 COPY packages/types ./packages/types
-COPY apps/api/package.json ./apps/api/package.json
-
-# Install all deps (including dev for build)
-RUN npm install --prefix ./apps/api
-RUN npm install --prefix ./packages/types
-
-# Copy source
 COPY apps/api ./apps/api
-COPY packages/types ./packages/types
+
+# Install all workspace dependencies at the root
+RUN npm install
 
 # Generate Prisma client
 RUN cd apps/api && npx prisma generate
