@@ -27,23 +27,21 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Only copy production deps
-COPY --from=builder /app/apps/api/package.json ./package.json
-COPY --from=builder /app/apps/api/package-lock.json ./package-lock.json 2>/dev/null || true
+# Copy root node_modules and package.jsons for workspace resolution
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
-RUN npm install --omit=dev --ignore-scripts || true
+# Copy types package (needed for runtime if not fully bundled)
+COPY --from=builder /app/packages/types ./packages/types
 
-# Copy built output
-COPY --from=builder /app/apps/api/dist ./dist
+# Copy built API
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
 
-# Copy Prisma client (generated at build time)
-COPY --from=builder /app/apps/api/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/apps/api/node_modules/@prisma ./node_modules/@prisma
-
-# Copy prisma schema for migrations
-COPY --from=builder /app/apps/api/prisma ./prisma
+# Copy Prisma schema and generated client
+COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
 
 EXPOSE 3001
 
 # Run migrations then start
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/apps/api/src/main"]
+CMD ["sh", "-c", "cd apps/api && npx prisma migrate deploy && node dist/src/main"]
