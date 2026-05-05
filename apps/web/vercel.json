@@ -1,8 +1,6 @@
 {
-  "buildCommand": "npm install --prefix ../../packages/types && npm install && npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "npm install",
   "devCommand": "npm run dev",
   "rewrites": [
     {
