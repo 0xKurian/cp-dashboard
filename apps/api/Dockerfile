@@ -6,9 +6,10 @@ WORKDIR /app
 # Copy root workspace manifest
 COPY package.json package-lock.json ./
 
-# Copy source code
+# Copy source code and workspace package.jsons
 COPY packages/types ./packages/types
 COPY apps/api ./apps/api
+COPY apps/web/package.json ./apps/web/package.json
 
 # Install all workspace dependencies at the root
 RUN npm install
