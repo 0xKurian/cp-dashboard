@@ -44,4 +44,4 @@ COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
 EXPOSE 3001
 
 # Run migrations then start
-CMD ["sh", "-c", "cd apps/api && npx prisma migrate deploy && node dist/src/main"]
+CMD ["sh", "-c", "cd apps/api && npx prisma@5 migrate deploy && node dist/apps/api/src/main"]
